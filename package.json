@@ -1,0 +1,34 @@
+{
+  "name": "amqpemitter",
+  "version": "1.0.0",
+  "description": "Reliable distributed AMQP EventEmitter with a customized API supporting both request/response and publish/subscribe patterns",
+  "main": "lib.js",
+  "directories": {
+    "example": "examples"
+  },
+  "dependencies": {
+    "amqplib": "^0.5.2",
+    "eventemitter2": "^5.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "./test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cl1608Ho/amqpemitter.git"
+  },
+  "keywords": [
+    "rabbitmq",
+    "amqp",
+    "eventemitter",
+    "event",
+    "emitter"
+  ],
+  "author": "Cl1608Ho <cl1608ho@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Cl1608Ho/amqpemitter/issues"
+  },
+  "homepage": "https://github.com/Cl1608Ho/amqpemitter"
+}
