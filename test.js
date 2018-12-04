@@ -2,7 +2,7 @@
 
 'use strict'
 
-const FUZZ_TESTS = 100;
+const FUZZ_TESTS = 10;
 const NUM_MESSAGES = 1000;
 
 const assert = require('assert');
@@ -57,8 +57,9 @@ test('Connect successfully', async () => {
 async function _assertRequestTransport(payload) {
   const key = 'test.one-' + await random('hex');
 
-  await events.manyOne(key, NUM_MESSAGES, async (request, arg2) => {
+  await events.manyOne(key, NUM_MESSAGES, async (event, request, arg2) => {
     try {
+      assert.deepEqual(event, key);
       assert.deepEqual(request, payload);
       assert.deepEqual(arg2, payload);
       return request;
@@ -85,8 +86,9 @@ async function _assertPublishTransport(payload) {
   for(let i = 0; i < RECEIVERS; i++) {
     const [wait, callback] = createCallback();
     let counter = 0;
-    await events.manyAll(key, NUM_MESSAGES, async (msg, arg2) => {
+    await events.manyAll(key, NUM_MESSAGES, async (event, msg, arg2) => {
       try {
+        assert.deepEqual(event, key);
         assert.deepEqual(msg, payload);
         assert.deepEqual(arg2, payload);
         if(++counter == NUM_MESSAGES)

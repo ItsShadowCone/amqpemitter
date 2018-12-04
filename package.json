@@ -7,7 +7,7 @@
     "example": "examples"
   },
   "dependencies": {
-    "amqplib": "^0.5.2",
+    "amqplib": "^0.5.3",
     "eventemitter2": "^5.0.1"
   },
   "devDependencies": {},

@@ -186,13 +186,13 @@ class AMQPEmitter {
 
       switch(type) {
         case TYPES.ALL:
-          await this.emitter.emitAsync(id, ...JSON.parse(msg.content.toString()));
+          await this.emitter.emitAsync(id, event, ...JSON.parse(msg.content.toString()));
           this.channel.ack(msg);
           break;
 
         case TYPES.ONE:
           if(msg.properties.replyTo && msg.properties.correlationId) {
-            const response = await this.emitter.emitAsync(id, ...JSON.parse(msg.content.toString()));
+            const response = await this.emitter.emitAsync(id, event, ...JSON.parse(msg.content.toString()));
 
             await this._send('', msg.properties.replyTo, (response[0] == undefined ? null : response[0]), {correlationId: msg.properties.correlationId});
             this.channel.ack(msg);

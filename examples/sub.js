@@ -25,12 +25,12 @@ async function run() {
   console.log('Connecting');
   await events.connect();
 
-  events.onOne(['log', 'pub'], ({line}) => {
+  events.onOne(['log', 'pub'], (event, {line}) => {
     console.log('One', line);
     return 'ACK ' + line;
   });
 
-  events.onAll(['log', 'send'], ({line}) => {
+  events.onAll(['log', 'send'], (event, {line}) => {
     console.log('All', line);
   });
   console.log('Waiting for messages');
