@@ -39,5 +39,3 @@ async function run() {
 run().catch((error) => {
   console.log(error);
 });
-
-// vim: set expandtab shiftwidth=2 softtabstop=2 :

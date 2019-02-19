@@ -86,7 +86,7 @@ await emitter.emit('error', new Error('Something terrible happened'));
 **onOne(event, listener)**: Subscribes to a request/response style event. Emitted messages are delivered to exactly one registered listener across the whole network, its return value is delivered back to emitOne(). Returns a promise which resolves as soon as the event is usable, prior to that messages are not guaranteed to pass through it.
 ```js
 await emitter.onOne('example.sendEmail', async (event, name, email) => {
-  await internal.sendEmail(name, email)
+  await internal.sendEmail(name, email);
   return `An email has been sent to ${email}.`;
 });
 ```
@@ -105,7 +105,7 @@ console.log(await emitter.emitOne('example.sendEmail', 'John Doe', 'john@example
 
 ## Publish/Subscribe
 
-> **Note:** listeners are callback functions whose first argument is always the actual event that was broadcasted, in string form.
+> **Note:** listeners are callback functions whose first argument is always the actual event that was broadcast, in string form.
 > This differs from the registered event if wildcards were used
 
 **onAll(event, listener)**: Subscribes to a publish/subscribe style event. Emitted messages are delivered to all registered listeners, as such its return value is discarded. Returns a promise which resolves as soon as the event is usable, prior to that messages are not guaranteed to pass through it.
