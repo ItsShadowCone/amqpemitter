@@ -187,13 +187,13 @@ class AMQPEmitter {
 
             switch (type) {
                 case TYPES.ALL:
-                    await this.emitter.emitAsync(id, event, ...JSON.parse(msg.content.toString()));
+                    await this.emitter.emitAsync(id, event, JSON.parse(msg.content.toString()));
                     this.channel.ack(msg);
                     break;
 
                 case TYPES.ONE:
                     if (msg.properties.replyTo && msg.properties.correlationId) {
-                        const response = await this.emitter.emitAsync(id, event, ...JSON.parse(msg.content.toString()));
+                        const response = await this.emitter.emitAsync(id, event, JSON.parse(msg.content.toString()));
 
                         await this._send('', msg.properties.replyTo, (response[0] === undefined ? null : response[0]), {correlationId: msg.properties.correlationId});
                         this.channel.ack(msg);
@@ -291,8 +291,8 @@ class AMQPEmitter {
     }
 
     async _many(type, event, number, listener) {
-        const _listener = async (...args) => {
-            const ret = await listener(...args);
+        const _listener = async (event, body) => {
+            const ret = await listener(event, body);
 
             if (--number === 0)
                 await this._off(type, event, _listener);
@@ -339,25 +339,25 @@ class AMQPEmitter {
         return this.emitter.off(id, listener);
     }
 
-    async emit(event, ...args) {
+    async emit(event, body) {
         if (!Array.isArray(event))
             event = event.split('.');
 
         if (event.length === 1)
-            return this.emitter.emit(event, ...args);
+            return this.emitter.emit(event, body);
         else
             return await this.emit('error', new Error('Use of emitter.emit() is deprecated for distributed use, use either emitOne() or emitAll()'));
     }
 
     /* async */
-    emitOne(event, ...args) {
+    emitOne(event, body) {
         return new Promise(async (resolve, reject) => {
             if (Array.isArray(event))
                 event = event.join('.');
 
             const correlationID = await generateID();
 
-            await this._send('', event, args, {replyTo: 'amq.rabbitmq.reply-to', correlationId: correlationID});
+            await this._send('', event, body, {replyTo: 'amq.rabbitmq.reply-to', correlationId: correlationID});
 
             const _cleanup = () => {
                 delete this.requests[correlationID];
@@ -382,11 +382,11 @@ class AMQPEmitter {
         });
     }
 
-    async emitAll(event, ...args) {
+    async emitAll(event, body) {
         if (Array.isArray(event))
             event = event.join('.');
 
-        await this._send(this.config.exchange, event, args);
+        await this._send(this.config.exchange, event, body);
     }
 }
 

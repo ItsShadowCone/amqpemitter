@@ -1,6 +1,6 @@
 {
   "name": "amqpemitter",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Reliable distributed AMQP EventEmitter with a customized API supporting both request/response and publish/subscribe patterns",
   "main": "lib.js",
   "directories": {

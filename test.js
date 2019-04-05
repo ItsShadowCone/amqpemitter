@@ -59,11 +59,10 @@ test('Connect successfully', async () => {
 async function _assertRequestTransport(payload) {
     const key = 'test.one-' + await random('hex');
 
-    await events.manyOne(key, NUM_MESSAGES, async (event, request, arg2) => {
+    await events.manyOne(key, NUM_MESSAGES, async (event, request) => {
         try {
             assert.deepEqual(event, key);
             assert.deepEqual(request, payload);
-            assert.deepEqual(arg2, payload);
             return request;
         } catch (err) {
             return err;
@@ -71,7 +70,7 @@ async function _assertRequestTransport(payload) {
     });
     let waits = [];
     for (let i = 0; i < NUM_MESSAGES; i++) {
-        waits.push(events.emitOne(key, payload, payload));
+        waits.push(events.emitOne(key, payload));
     }
 
     const responses = await Promise.all(waits);
@@ -88,11 +87,10 @@ async function _assertPublishTransport(payload) {
     for (let i = 0; i < RECEIVERS; i++) {
         const [wait, callback] = createCallback();
         let counter = 0;
-        await events.manyAll(key, NUM_MESSAGES, async (event, msg, arg2) => {
+        await events.manyAll(key, NUM_MESSAGES, async (event, msg) => {
             try {
                 assert.deepEqual(event, key);
                 assert.deepEqual(msg, payload);
-                assert.deepEqual(arg2, payload);
                 if (++counter === NUM_MESSAGES)
                     callback(null, true);
             } catch (err) {
@@ -103,7 +101,7 @@ async function _assertPublishTransport(payload) {
     }
 
     for (let i = 0; i < NUM_MESSAGES; i++) {
-        waits.push(events.emitAll(key, payload, payload));
+        waits.push(events.emitAll(key, payload));
     }
     await Promise.all(waits);
 }
