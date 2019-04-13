@@ -29,6 +29,8 @@ const TYPES = {
     ALL: 'all',
 };
 
+const UNDEFINED = 'undefined';
+
 // Returns a promise and a callback; the promise is resolved when the callback is called
 function createCallback() {
     let cb;
@@ -111,7 +113,10 @@ class AMQPEmitter {
         };
 
         if (this.connected) {
-            this.channel.publish(exchange, queue, Buffer.from(JSON.stringify(msg)), options, (nack, ack) => {
+            let serialized = JSON.stringify(msg);
+            if(!serialized)
+                serialized = UNDEFINED;
+            this.channel.publish(exchange, queue, Buffer.from(serialized), options, (nack, ack) => {
                 if (nack)
                     callback(new Error('Message nacked'));
                 else {
@@ -185,15 +190,18 @@ class AMQPEmitter {
             const event = msg.fields.routingKey;
             const id = type + '.' + event;
 
+            const serialized = msg.content.toString();
+            const data = (serialized === UNDEFINED ? undefined : JSON.parse(serialized));
+
             switch (type) {
                 case TYPES.ALL:
-                    await this.emitter.emitAsync(id, event, JSON.parse(msg.content.toString()));
+                    await this.emitter.emitAsync(id, event, data);
                     this.channel.ack(msg);
                     break;
 
                 case TYPES.ONE:
                     if (msg.properties.replyTo && msg.properties.correlationId) {
-                        const response = await this.emitter.emitAsync(id, event, JSON.parse(msg.content.toString()));
+                        const response = await this.emitter.emitAsync(id, event, data);
 
                         await this._send('', msg.properties.replyTo, (response[0] === undefined ? null : response[0]), {correlationId: msg.properties.correlationId});
                         this.channel.ack(msg);

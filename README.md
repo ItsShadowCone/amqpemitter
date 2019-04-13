@@ -73,7 +73,7 @@ await emitter.on('error', (err) => {
 
 **off(event, listener)**: Unsubscribes from a previously subscribed event.
 
-**emit(event, payload)**: Fires internal event. Internal events are not sent over the wire, only evaluated locally.
+**emit(event, [payload])**: Fires internal event. Internal events are not sent over the wire, only evaluated locally.
 ```js
 await emitter.emit('error', new Error('Something terrible happened'));
 ```
@@ -97,9 +97,9 @@ await emitter.onOne('example.sendEmail', async (event, {name, email}) => {
 
 **offOne(event, listener)**: Unsubscribes from a previously subscribed event.
 
-**emitOne(event, payload)**: Fires a request/response style event. Only the very first argument is sent, serialized as JSON data. Returns a promise which resolves to the return value of the listener that handles this request.
+**emitOne(event, [payload])**: Fires a request/response style event. Only the very first argument is sent, serialized as JSON data. Returns a promise which resolves to the return value of the listener that handles this request.
 ```js
-console.log(await emitter.emitOne('example.sendEmail', 'John Doe', 'john@example.com'));
+console.log(await emitter.emitOne('example.sendEmail', {name: 'John Doe', email: 'john@example.com'}));
 // Prints 'An email has been sent to john@example.com.'
 ```
 
@@ -121,7 +121,7 @@ await emitter.onAll('example.log', async (event, msg) => {
 
 **offAll(event, listener)**: Unsubscribes from a previously subscribed event.
 
-**emitAll(event, payload...)**: Fires a publish/subscribe style event. Only the very first payload argument is sent, serialized as JSON data. Returns a promise which resolves as soon as the AMQP server indicates the message has been handled.
+**emitAll(event, [payload])**: Fires a publish/subscribe style event. Only the very first payload argument is sent, serialized as JSON data. Returns a promise which resolves as soon as the AMQP server indicates the message has been handled.
 ```js
 await emitter.emitAll('example.log', 'User John logged in');
 await emitter.emitAll('example.log', 'User John added last name Doe to his profile');

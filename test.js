@@ -112,6 +112,18 @@ test('Basic request/response test', async () => {
 test('Basic publish/subscribe test', async () => {
     await _assertPublishTransport(await random());
 });
+test('Request/response test with undefined payload', async() => {
+    await _assertRequestTransport();
+});
+test('Publish/subscribe test with undefined payload', async() => {
+    await _assertPublishTransport();
+});
+test('Request/response test with null payload', async() => {
+    await _assertRequestTransport(null);
+});
+test('Publish/subscribe test with null payload', async() => {
+    await _assertPublishTransport(null);
+});
 
 test('Fuzz ' + FUZZ_TESTS + ' string/object request/response and publish/subscribe tests', async () => {
     let all = [];
